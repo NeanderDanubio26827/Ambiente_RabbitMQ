@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+service msgService {
+    rpc ligar(Vazio) returns (Estado);
+    rpc desligar(Vazio) returns (Estado);
+}
+
+message Estado {
+    string onOff = 1;
+}
+
+message Vazio {}

@@ -1,8 +1,18 @@
+import grpc
 import pika
 import sys
 import os
 import threading
+import file_pb2_grpc
+import file_pb2
 '''docker run --rm -p 5672:5672 -p 8080:15672 rabbitmq:3-management'''
+
+last_read_lamp = None
+last_read_Air = None
+last_read_Alarm = None
+last_read_sensor_lamp = None
+last_read_sensor_Air = None
+last_read_sensor_Alarm = None
 
 
 def fun():
@@ -24,9 +34,46 @@ def method_main(arg):
 
         print(' [*] Waiting for messages. To exit press CTRL+C')
         channel.start_consuming()
-    except:
+    except print():
 
         connection.close()
+
+
+"""Método para fazer os sensores lerem"""
+
+
+def method_for_grpc1():
+
+    try:
+        print("Bringing connect")
+        with grpc.insecure_channel('localhost:50051') as channel1:
+            stub = file_pb2_grpc.msgServiceStub(channel1)
+            lampada = stub.ligar(file_pb2.Vazio())
+            print(lampada)
+    except print(0):
+        pass
+
+
+def method_for_grpc2():
+    try:
+        print("Bringing connect")
+        with grpc.insecure_channel('localhost:50052') as channel2:
+            stub = file_pb2_grpc.msgServiceStub(channel2)
+            alarme = stub.desligar(file_pb2.Vazio())
+            print(alarme)
+    except print(0):
+        pass
+
+
+def method_for_grpc3():
+    try:
+        print("Bringing connect")
+        with grpc.insecure_channel('localhost:50053') as channel3:
+            stub = file_pb2_grpc.msgServiceStub(channel3)
+            ar = stub.ligar(file_pb2.Vazio())
+            print(ar)
+    except print(0):
+        pass
 
 
 def main():
@@ -39,12 +86,19 @@ def main():
             target=method_main,  args=['measures_temp'])
         thread3 = threading.Thread(
             target=method_main,  args=['measures_volume'])
-        #thread4 = threading.Thread(ttarget=method_main,  args=['client'])
+        thread4 = threading.Thread(
+            target=method_for_grpc1, args=[])
+        thread5 = threading.Thread(
+            target=method_for_grpc2, args=[])
+        thread6 = threading.Thread(
+            target=method_for_grpc3,  args=[])
 
         thread1.start()
         thread2.start()
         thread3.start()
-        # thread4.start()
+        thread4.start()
+        thread5.start()
+        thread6.start()
 
     except print(0):
         fun()
